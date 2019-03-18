@@ -72,6 +72,7 @@ body {
   opacity: 0;
   line-height: 0.25em;
   margin-top: 0.75em;
+  font-weight: normal;
 }
 
 #popup.visible h1 {
@@ -90,6 +91,7 @@ a:hover {
 #popup h4 {
   transition: all 0.5s, opacity 0.75s ease-out 1.25s;
   opacity: 0;
+  font-weight: normal;
 }
 
 #popup.visible h4 {
@@ -99,7 +101,7 @@ a:hover {
 #popup input {
   color: #808080;
   font-family: Roboto, sans-serif;
-  transition: border 0.25s ease-out;
+  transition: all 0.5s ease-out, border 0.25s ease-out;
   padding: 0.5em 0;
   border-radius: 0.25em;
   border: 0.1em solid #DCDCDC;
@@ -107,6 +109,9 @@ a:hover {
   width: 90%;
   font-size: 1em;
   outline: 0;
+  max-height: 0;
+  margin: 0;
+  opacity: 0;
 }
 
 #popup #username {
@@ -114,32 +119,23 @@ a:hover {
   opacity: 0;
 }
 
-#popup.visible #username {
+#popup.visible #username.visible {
   opacity: 1;
 }
 
-#popup #displayName {
+#popup.visible input.visible {
   transition: all 0.5s ease-out;
-  max-height: 0;
-  margin: 0;
-  opacity: 0;
-}
-
-#popup #displayName.visible {
   margin: 0.5em 0;
   max-height: inherit;
   opacity: 1;
 }
 
-#popup #displayName::placeholder {
-  color: transparent;
-}
-
-#popup #displayName.visible::placeholder {
+#popup input.visible::placeholder {
   color: inherit;
 }
 
 #popup input::placeholder {
+  color: transparent;
   opacity: 1;
   transform: translate(0, 0);
   transition: all 0.25s ease-out;

@@ -328,29 +328,31 @@ function switchFunction() {
   }
   func = !func;
 }
-
-document.querySelector("#popup button").addEventListener("mousedown", () => {
-  document.querySelector("#popup button div").animate([
-    // keyframes
-    {
-      transform: 'translateX(-0.15em)'
-    },
-    {
-      transform: 'translateX(0em)'
-    },
-    {
-      transform: 'translateX(-0.15em)'
-    }
-  ], {
-    duration: 1000,
+if (document.querySelector("#popup button")) {
+  document.querySelector("#popup button").addEventListener("mousedown", () => {
+    document.querySelector("#popup button div").animate([
+      // keyframes
+      {
+        transform: 'translateX(-0.15em)'
+      },
+      {
+        transform: 'translateX(0em)'
+      },
+      {
+        transform: 'translateX(-0.15em)'
+      }
+    ], {
+      duration: 1000,
+    });
   });
-});
-
+}
 //document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
   document.querySelector("#popup").classList.add("visible");
 }, 100)
-document.querySelector('#unlock').addEventListener('click', didClickLogin);
-document.querySelector("#popup h4 a").addEventListener('click', switchFunction);
+if (document.querySelector("#popup button")) {
+  document.querySelector('#unlock').addEventListener('click', didClickLogin);
+  document.querySelector("#popup h4 a").addEventListener('click', switchFunction);
+}
 //}, false);
 

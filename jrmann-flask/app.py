@@ -10,6 +10,7 @@ from flask import render_template
 from flask import request
 from flask import session
 from flask import url_for
+from flask import Markup
 from flask_login import LoginManager
 from flask_login import login_required
 from flask_login import login_user
@@ -189,7 +190,7 @@ def verify_credential_info():
     else:
         return make_response(jsonify({'fail': 'User already exists.'}), 401)
 
-    flash('Successfully registered as {}.'.format(username))
+    flash(Markup('Welcome, <strong>{}</strong>. Please log in.'.format(username)))
 
     return jsonify({'success': 'User successfully registered.'})
 
