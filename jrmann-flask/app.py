@@ -80,7 +80,7 @@ def webauthn_begin_activate():
     session['register_username'] = username
     session['register_display_name'] = display_name
 
-    rp_name = 'localhost'
+    rp_name = 'jrmann.com'
     challenge = util.generate_challenge(32)
     ukey = util.generate_ukey()
 
