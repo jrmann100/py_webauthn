@@ -346,13 +346,40 @@ if (document.querySelector("#popup button")) {
     });
   });
 }
-document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    document.querySelector("#popup").classList.add("visible");
-  }, 100)
-  if (document.querySelector("#popup button")) {
-    document.querySelector('#unlock').addEventListener('click', didClickLogin);
-    document.querySelector("#popup h4 a").addEventListener('click', switchFunction);
+
+function hint() {
+  if (!func) {
+    document.querySelector("#hint").classList.add("visible");
+    var text;
+    switch (this) {
+      case document.querySelector("#username"):
+        text = "Choose an\nalphanumeric\nusername.";
+        break;
+      case document.querySelector("#displayName"):
+        text = "Use your real name\nfor best results.\n\xa0";
+        break;
+    }
+    document.querySelector("#hint").innerText = text;
+    this.addEventListener("focusout", removeHint);
   }
+}
+
+function removeHint() {
+  document.querySelector("#hint").classList.remove("visible");
+  document.querySelector("#hint").innerText = "\xa0\n\xa0\n\xa0";
+  this.removeEventListener("focusout", removeHint);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
+  document.querySelector("#popup").classList.add("visible");
+}, 100)
+if (document.querySelector("#popup button")) {
+  document.querySelector('#unlock').addEventListener('click', didClickLogin);
+  document.querySelector("#popup h4 a").addEventListener('click', switchFunction);
+  document.querySelector("#username").addEventListener("focus", hint);
+  document.querySelector("#displayName").addEventListener("focus", hint);
+
+}
 }, false);
 
