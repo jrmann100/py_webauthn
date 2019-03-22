@@ -346,13 +346,13 @@ if (document.querySelector("#popup button")) {
     });
   });
 }
-//document.addEventListener('DOMContentLoaded', () => {
-setTimeout(() => {
-  document.querySelector("#popup").classList.add("visible");
-}, 100)
-if (document.querySelector("#popup button")) {
-  document.querySelector('#unlock').addEventListener('click', didClickLogin);
-  document.querySelector("#popup h4 a").addEventListener('click', switchFunction);
-}
-//}, false);
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.querySelector("#popup").classList.add("visible");
+  }, 100)
+  if (document.querySelector("#popup button")) {
+    document.querySelector('#unlock').addEventListener('click', didClickLogin);
+    document.querySelector("#popup h4 a").addEventListener('click', switchFunction);
+  }
+}, false);
 

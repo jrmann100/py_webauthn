@@ -1,6 +1,6 @@
 import os
 import sys
-
+from os import environ
 from flask import Flask
 from flask import flash
 from flask import jsonify
@@ -15,29 +15,102 @@ from flask_login import LoginManager
 from flask_login import login_required
 from flask_login import login_user
 from flask_login import logout_user
-
+from flask_login import current_user
 import util
 
 from db import db
 from context import webauthn
 from models import User
 
+class ReverseProxied(object):
+    '''Wrap the application in this middleware and configure the 
+    front-end server to add these headers, to let you quietly bind 
+    this to a URL other than / and to an HTTP scheme that is 
+    different than what is used locally.
+
+    In nginx:
+    location /myprefix {
+        proxy_pass http://192.168.0.1:5001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header X-Script-Name /myprefix;
+        }
+
+    :param app: the WSGI application
+    '''
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
+        if script_name:
+            environ['SCRIPT_NAME'] = script_name
+            path_info = environ['PATH_INFO']
+            if path_info.startswith(script_name):
+                environ['PATH_INFO'] = path_info[len(script_name):]
+
+        scheme = environ.get('HTTP_X_SCHEME', '')
+        if scheme:
+            environ['wsgi.url_scheme'] = scheme
+        return self.app(environ, start_response)
+
 app = Flask(__name__)
+app.wsgi_app = ReverseProxied(app.wsgi_app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(
     os.path.join(os.path.dirname(os.path.abspath(__name__)), 'webauthn.db'))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-sk = os.environ.get('FLASK_SECRET_KEY')
+sk = environ.get('FLASK_SECRET_KEY')
 app.secret_key = sk if sk else os.urandom(40)
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-RP_ID = 'jrmann.com'
-ORIGIN = 'https://jrmann.com'
+RP_ID = 'dev.jrmann.com'
+ORIGIN = 'https://dev.jrmann.com'
 
 # Trust anchors (trusted attestation roots) should be
 # placed in TRUST_ANCHOR_DIR.
 TRUST_ANCHOR_DIR = 'trusted_attestation_roots'
+
+@app.after_request
+def apply_caching(response):
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    response.headers['Content-Security-Policy'] = "default-src 'self' *.googleapis.com *.gstatic.com"
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
+
+@app.route("/settings")
+@login_required
+def settings():
+   return ("You are logged in!")
+
+@login_manager.unauthorized_handler
+def handle_needs_login():
+    flash("Please log in to continue.")
+    return redirect(url_for('login', next=request.endpoint))
+
+def redirect_dest(fallback):
+    dest = request.args.get('next')
+    try:
+        dest_url = url_for(dest)
+    except:
+        return redirect(fallback)
+    return redirect(dest_url)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if current_user.is_authenticated:
+        #flash("Logged in!")
+        return redirect_dest(fallback=url_for('index'))
+    else:
+        return render_template("login.html")
+
+@app.route("/")
+def index():
+    return "You are logged in! Sweet!"
 
 
 @login_manager.user_loader
@@ -48,11 +121,6 @@ def load_user(user_id):
         return None
 
     return User.query.get(int(user_id))
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
 
 
 @app.route('/webauthn_begin_activate', methods=['POST'])
@@ -81,7 +149,7 @@ def webauthn_begin_activate():
     session['register_username'] = username
     session['register_display_name'] = display_name
 
-    rp_name = 'jrmann.com'
+    rp_name = 'dev.jrmann.com'
     challenge = util.generate_challenge(32)
     ukey = util.generate_ukey()
 
@@ -90,7 +158,7 @@ def webauthn_begin_activate():
 
     make_credential_options = webauthn.WebAuthnMakeCredentialOptions(
         challenge, rp_name, RP_ID, ukey, username, display_name,
-        'https://example.com')
+        'https://dev.jrmann.com')
 
     return jsonify(make_credential_options.registration_dict)
 
@@ -238,8 +306,7 @@ def verify_assertion():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
-
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8081, ssl_context='adhoc', debug=True)
