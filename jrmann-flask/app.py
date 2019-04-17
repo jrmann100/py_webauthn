@@ -48,11 +48,6 @@ def apply_caching(response):
     response.headers['X-XSS-Protection'] = '1; mode=block'
     return response
 
-@app.route("/settings")
-@login_required
-def settings():
-   return ("You are logged in!")
-
 @login_manager.unauthorized_handler
 def handle_needs_login():
     flash("Please log in to continue.")
@@ -68,16 +63,25 @@ def redirect_dest(fallback):
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.args.get('nginx'):
+        flash("Please log in in order to access this service.")
     if current_user.is_authenticated:
         #flash("Logged in!")
         return redirect_dest(fallback=url_for('index'))
     else:
         return render_template("login.html")
 
-@app.route("/index")
 @app.route("/")
+@login_required
 def index():
     return "You are logged in! Sweet!"
+
+@app.route("/auth")
+def nginx_auth():
+    if current_user.is_authenticated:
+        return "You are logged in! Sweet!"
+    else:
+        return 'Sorry, but unfortunately you\'re not logged in.', 401
 
 @login_manager.user_loader
 def load_user(user_id):
