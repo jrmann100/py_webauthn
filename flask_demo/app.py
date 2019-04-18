@@ -61,9 +61,13 @@ def redirect_dest(fallback):
         return redirect(fallback)
     return redirect(dest_url)
 
+whitelisted_users = [1, 2]
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.args.get('nginx'):
+    if request.args.get('nginx') and current_user.is_authenticated and current_user.id not in whitelisted_users:
+        flash("You aren't whitelisted for service access.\n Please contact a network administrator.")
+    elif request.args.get('nginx') and not current_user.is_authenticated:
         flash("Please log in in order to access this service.")
     if current_user.is_authenticated:
         #flash("Logged in!")
@@ -74,14 +78,16 @@ def login():
 @app.route("/")
 @login_required
 def index():
-    return "You are logged in! Sweet!"
+    return render_template("index.html")
 
 @app.route("/auth")
 def nginx_auth():
-    if current_user.is_authenticated:
-        return "You are logged in! Sweet!"
+    if current_user.is_authenticated and current_user.id in whitelisted_users:
+        return "User is logged in and has access to services."
+    elif current_user.is_authenticated and current_user.id not in whitelisted_users:
+        return "User is logged in but does not have access to services", 401
     else:
-        return 'Sorry, but unfortunately you\'re not logged in.', 401
+        return "User is not logged in.", 401
 
 @login_manager.user_loader
 def load_user(user_id):
