@@ -1,0 +1,10 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<h3>You are logged in! Sweet!</h3>
+<i>I haven't added an index page yet.</i>
+{% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+    <p class="flash">{{ message }}</p>
+{% endfor %} {% endif %} {% endwith %}
+</body>
+</html>
