@@ -1,0 +1,112 @@
+body {
+  background-color: #DCDCDC;
+  font-family: "Roboto", sans-serif;
+  color: #696969;
+  font-size: 1.25em;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #DCDCDC;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #808080;
+  border-radius: 0.5em;
+}
+
+.right {
+  float: right;
+}
+
+#logout:hover path {
+  fill: #808080;
+}
+
+#card-container {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+}
+
+#card {
+  opacity: 0;
+  visibility: hidden;
+  position: relative;
+  display: inline-block;
+  margin: 1em 0.25em;
+  height: 9em;
+  width: 6em;
+  background-color: #F5F5F5;
+  border-radius: 0.5em;
+  text-align: center;
+  transform: scale(1.05);
+  transition: all 0.25s ease-out, visibility 0s linear;
+  padding: 0.5em 0.5em;
+}
+
+#card.visible {
+  transform: scale(1);
+  visibility: visible;
+  opacity: 1;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(white 100%, transparent 100%);
+  /* https://stackoverflow.com/a/10296258/9068081 */
+}
+
+#card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  box-shadow: 0 0 0.5em #BEBEBE;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#card *:hover {
+  cursor: pointer;
+}
+
+#card:hover::before {
+  box-shadow: 0 0 0.25em #696969;
+}
+
+#card p {
+  transition: all 0.25s ease-out;
+  color: #696969;
+}
+
+#card:hover p {
+  color: #909090;
+}
+
+svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#card svg {
+  width: 50%;
+  height: 50%;
+  padding-top: 15%;
+}
+
+svg path {
+  fill: #696969;
+  transition: all 0.25s ease-out;
+}
+
+#card:hover svg path {
+  fill: #909090;
+}
+

@@ -11,6 +11,7 @@ from flask import request
 from flask import session
 from flask import url_for
 from flask import Markup
+from flask import send_from_directory
 from flask_login import LoginManager
 from flask_login import login_required
 from flask_login import login_user
@@ -32,12 +33,17 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+
 RP_ID = 'dev.jrmann.com'
 ORIGIN = 'https://dev.jrmann.com'
 
 # Trust anchors (trusted attestation roots) should be
 # placed in TRUST_ANCHOR_DIR.
 TRUST_ANCHOR_DIR = 'trusted_attestation_roots'
+
+@app.route('/favicon.ico')
+def favicon():
+   return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
 @app.after_request
 def apply_caching(response):
@@ -286,3 +292,4 @@ def logout():
 
 if __name__ == '__main__':
     app.run(host='localhost', port=8081, ssl_context='adhoc', debug=True)
+
