@@ -72,7 +72,8 @@ whitelisted_users = [1, 2]
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.args.get('nginx') and current_user.is_authenticated and current_user.id not in whitelisted_users:
-        flash("You aren't whitelisted for service access.\n Please contact a network administrator.")
+        flash("You aren't whitelisted for service access.")
+        flash("Please contact a network administrator.")
     elif request.args.get('nginx') and not current_user.is_authenticated:
         flash("Please log in in order to access this service.")
     if current_user.is_authenticated:
