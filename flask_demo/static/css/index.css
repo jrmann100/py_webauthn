@@ -1,3 +1,8 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   background-color: #DCDCDC;
   font-family: "Roboto", sans-serif;
@@ -5,6 +10,8 @@ body {
   font-size: 1.25em;
   overflow-y: scroll;
   overflow-x: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 body::-webkit-scrollbar {
@@ -20,12 +27,93 @@ body::-webkit-scrollbar-thumb {
   border-radius: 0.5em;
 }
 
-.right {
+#header {
+  position: absolute;
+  top: 0;
+  height: 2em;
+  left: 0;
+  right: 0;
+}
+
+#exit {
+  transition: all 0.5s ease-out, top 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  transform: translate(-1em);
+  width: 2em;
+  height: 3em;
+  top: -3.5em;
+  border-bottom-right-radius: 2em;
+  border-bottom-left-radius: 2em;
+  text-align: center;
+  background-color: #F5F5F5;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#exit.visible {
+  top: -1em;
+}
+
+#exit svg {
+  margin-top: 1.25em;
+}
+
+#header span {
+  padding: 0.5em;
+}
+
+#header span.left {
+  float: left;
+}
+
+#header span.right {
   float: right;
 }
 
 #logout:hover path {
   fill: #808080;
+}
+
+#iframe-wrapper {
+  z-index: 2;
+  position: fixed;
+  transition: all 0.25s ease-out, visibility 0.25s linear;
+  transform: scale(0.95);
+  opacity: 0;
+  visibility: hidden;
+  border-radius: 1em;
+  top: 2.5em;
+}
+
+#iframe-wrapper.ssh {
+  left: 2%;
+  right: 2%;
+  bottom: 5%;
+  padding: 0.5em;
+  background: #191919;
+}
+
+#iframe-wrapper.account {
+  left: 30%;
+  right: 30%;
+  bottom: 10%;
+  padding: 0.5em;
+  border: 0.25em solid #696969;
+  background: #DCDCDC;
+}
+
+#iframe-wrapper.visible {
+  transform: scale(1);
+  opacity: 1;
+  visibility: visible;
+}
+
+#iframe-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 #card-container {
@@ -47,8 +135,9 @@ body::-webkit-scrollbar-thumb {
   border-radius: 0.5em;
   text-align: center;
   transform: scale(1.05);
-  transition: all 0.25s ease-out, visibility 0s linear;
+  transition: all 0.25s ease-out, visibility 0.25s linear;
   padding: 0.5em 0.5em;
+  cursor: pointer;
 }
 
 #card.visible {
