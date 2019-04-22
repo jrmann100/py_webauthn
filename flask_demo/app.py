@@ -45,6 +45,10 @@ TRUST_ANCHOR_DIR = 'trusted_attestation_roots'
 def favicon():
    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico',mimetype='image/vnd.microsoft.icon')
 
+@app.route('/static/<path:path>')
+def send_js(path):
+        return send_from_directory(os.path.join(app.root_path, 'static'), path)
+
 @app.after_request
 def apply_caching(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
@@ -86,6 +90,23 @@ def login():
 @login_required
 def index():
     return render_template("index.html")
+
+if "--backdoor" in sys.argv[1:]:
+    print("BACKDOOR ENABLED - SECURITY VULNERABLE")
+
+@app.route("/backdoor")
+def backdoor():
+    if "--backdoor" in sys.argv[1:]:
+        if request.args.get('password') and request.args.get('password') == 'ins3cur1ty!' and request.args.get('user') and int(request.args.get('user')) in whitelisted_users:
+            db.session.add(load_user(int(request.args.get('user'))))
+            db.session.commit()
+            login_user(load_user(int(request.args.get('user'))))
+            flash("You used the backdoor to get in. Don't do it again.")
+            return redirect(url_for("index"))
+        else:
+            return "Nice try, but it's going to take more l33t h4x0r skills to break into this website."
+    else:
+        return "Backdoor disabled. Run server with --backdoor to enable."
 
 @app.route("/auth")
 def nginx_auth():
