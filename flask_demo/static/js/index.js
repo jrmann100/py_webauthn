@@ -13,8 +13,8 @@ outsideWrapper = function(evt) {
     parents.unshift(a);
     a = a.parentNode;
   }
-  if (parents.includes(evt.currentTarget)){
-  	hideService();
+  if (parents.includes(evt.currentTarget)) {
+    hideService();
     document.removeEventListener('click', outsideWrapper);
   }
 }
@@ -23,7 +23,9 @@ showService = function(event) {
   event.currentTarget.correspondingService.classList.add("visible");
   document.querySelector("#exit").classList.add("visible");
   activeService = event.currentTarget.correspondingService;
-  setTimeout(()=>{document.addEventListener('click', outsideWrapper)}, 100) // FIND BETTER SOLUTION
+  setTimeout(() => {
+    document.addEventListener('click', outsideWrapper)
+  }, 100) // FIND BETTER SOLUTION
 }
 
 hideService = function() {

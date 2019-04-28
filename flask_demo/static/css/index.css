@@ -14,6 +14,15 @@ body {
   height: 100%;
 }
 
+svg {
+  display: inline-block;
+}
+
+svg path {
+  fill: #696969;
+  transition: all 0.25s ease-out;
+}
+
 body::-webkit-scrollbar {
   width: 0.5em;
 }
@@ -33,6 +42,9 @@ body::-webkit-scrollbar-thumb {
   height: 2em;
   left: 0;
   right: 0;
+  background-color: #E0E0E0;
+  box-shadow: 0 0 0.75em #BEBEBE;
+  border-bottom: 0.1em solid #BEBEBE;
 }
 
 #exit {
@@ -47,7 +59,9 @@ body::-webkit-scrollbar-thumb {
   border-bottom-right-radius: 2em;
   border-bottom-left-radius: 2em;
   text-align: center;
-  background-color: #F5F5F5;
+  background-color: #E8E8E8;
+  box-shadow: 0 0 0.9em #BEBEBE;
+  border: 0.1em solid #BEBEBE;
   display: inline-block;
   cursor: pointer;
 }
@@ -72,6 +86,16 @@ body::-webkit-scrollbar-thumb {
   float: right;
 }
 
+#logout {
+  height: 1.25em;
+  width: 1.25em;
+  float: right;
+  padding: 0.5em;
+  padding-left: 0;
+  vertical-align: -0.1875em;
+  cursor: pointer;
+}
+
 #logout:hover path {
   fill: #808080;
 }
@@ -84,7 +108,7 @@ body::-webkit-scrollbar-thumb {
   opacity: 0;
   visibility: hidden;
   border-radius: 1em;
-  top: 2.5em;
+  top: 3em;
 }
 
 #iframe-wrapper.ssh {
@@ -96,8 +120,8 @@ body::-webkit-scrollbar-thumb {
 }
 
 #iframe-wrapper.account {
-  left: 30%;
-  right: 30%;
+  left: 35%;
+  right: 35%;
   bottom: 10%;
   padding: 0.5em;
   border: 0.25em solid #696969;
@@ -145,8 +169,14 @@ body::-webkit-scrollbar-thumb {
   visibility: visible;
   opacity: 1;
   z-index: 1;
-  -webkit-mask-image: linear-gradient(white 100%, transparent 100%);
+  box-shadow: 0 0 0.5em #BEBEBE;
+  /*-webkit-mask-image: linear-gradient(white 100%, transparent 100%);*/
   /* https://stackoverflow.com/a/10296258/9068081 */
+}
+
+#card:hover {
+  box-shadow: 0 0 0.75em #BEBEBE;
+  transform: scale(1.01);
 }
 
 #card::before {
@@ -157,7 +187,6 @@ body::-webkit-scrollbar-thumb {
   left: 0;
   right: 0;
   z-index: -1;
-  box-shadow: 0 0 0.5em #BEBEBE;
   overflow: hidden;
   cursor: pointer;
 }
@@ -166,22 +195,13 @@ body::-webkit-scrollbar-thumb {
   cursor: pointer;
 }
 
-#card:hover::before {
-  box-shadow: 0 0 0.25em #696969;
-}
-
 #card p {
   transition: all 0.25s ease-out;
   color: #696969;
 }
 
 #card:hover p {
-  color: #909090;
-}
-
-svg {
-  display: inline-block;
-  vertical-align: middle;
+  color: #808080;
 }
 
 #card svg {
@@ -190,12 +210,7 @@ svg {
   padding-top: 15%;
 }
 
-svg path {
-  fill: #696969;
-  transition: all 0.25s ease-out;
-}
-
 #card:hover svg path {
-  fill: #909090;
+  fill: #808080;
 }
 
