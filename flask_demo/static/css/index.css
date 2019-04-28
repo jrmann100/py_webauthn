@@ -59,7 +59,7 @@ body::-webkit-scrollbar-thumb {
   border-bottom-right-radius: 2em;
   border-bottom-left-radius: 2em;
   text-align: center;
-  background-color: #E8E8E8;
+  background-color: #F5F5F5;
   box-shadow: 0 0 0.9em #BEBEBE;
   border: 0.1em solid #BEBEBE;
   display: inline-block;
