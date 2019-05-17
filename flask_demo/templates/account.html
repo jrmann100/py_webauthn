@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700" rel="stylesheet">
+  </head>
+
+  <body>
+    <div id="card">
+      <!--<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4z"/></svg>!-->
+      <img src="https://avatars1.githubusercontent.com/u/17690438?s=460&v=4" />
+    </div>
+    <p>{{User.query.filter_by(id=current_user.id).first().display_name}}</p>
+    <script src="{{ url_for('static', filename='js/account.js') }}"></script>
+  </body>
+
+</html>
+

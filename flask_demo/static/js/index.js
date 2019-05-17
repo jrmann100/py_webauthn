@@ -26,10 +26,12 @@ showService = function(event) {
   setTimeout(() => {
     document.addEventListener('click', outsideWrapper)
   }, 100) // FIND BETTER SOLUTION
+  event.currentTarget.correspondingService.querySelector("iframe").src = "/" + event.currentTarget.correspondingService.classList[0]; // this is janky but it just might work...
 }
 
 hideService = function() {
   activeService.classList.remove("visible");
+  activeService.querySelector("iframe").src = "";
   document.querySelector("#exit").classList.remove("visible");
 }
 

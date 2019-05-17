@@ -23,7 +23,11 @@ from db import db
 from context import webauthn
 from models import User
 
+
+from werkzeug.contrib.fixers import ProxyFix
+
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///{}'.format(
     os.path.join(os.path.dirname(os.path.abspath(__name__)), 'webauthn.db'))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -90,6 +94,13 @@ def login():
 @login_required
 def index():
     return render_template("index.html")
+
+@app.route("/account")
+@login_required
+def account():
+    return render_template("account.html", User = User)
+
+
 
 if "--backdoor" in sys.argv[1:]:
     print("BACKDOOR ENABLED - SECURITY VULNERABLE")
