@@ -20,24 +20,43 @@ outsideWrapper = function(evt) {
 }
 
 showService = function(event) {
-  event.currentTarget.correspondingService.classList.add("visible");
   document.querySelector("#exit").classList.add("visible");
   activeService = event.currentTarget.correspondingService;
+  activeService.classList.add("visible");
   setTimeout(() => {
     document.addEventListener('click', outsideWrapper)
   }, 100) // FIND BETTER SOLUTION
-  event.currentTarget.correspondingService.querySelector("iframe").src = "/" + event.currentTarget.correspondingService.classList[0]; // this is janky but it just might work...
+  activeService.querySelector("iframe").src = "/" + activeService.classList[0]; // this is janky but it just might work...
 }
+
 
 hideService = function() {
-  activeService.classList.remove("visible");
+  if ((activeService.classList[0] == "ssh" && onbeforeSSH()) || activeService.classList[0] != "ssh") {
   activeService.querySelector("iframe").src = "";
+  activeService.classList.remove("visible");
   document.querySelector("#exit").classList.remove("visible");
 }
+}
 
-//document.querySelector("#exit").addEventListener('click', hideService, false); // Since outsideWrapper() includes the button!
+onbeforeSSH = function() {
+    contentWindow = activeService.querySelector("iframe").contentWindow
+    if ((contentWindow.shellinabox && contentWindow.shellinabox.session && confirm("Are you sure you want to end this SSH session?")) || !(contentWindow.shellinabox && contentWindow.shellinabox.session)) {
+        if (contentWindow.shellinabox){delete contentWindow.shellinabox.session;
+        delete contentWindow.onbeforeunload}
+        return true;
+    }
+    else {
+        console.log("canceled.")
+    setTimeout(() => {
+        document.addEventListener('click', outsideWrapper)
+        console.log("added listner..")
+    }, 100) // FIND BETTER SOLUTION
+        return false;
+    }
+}
+    //document.querySelector("#exit").addEventListener('click', hideService, false); // Since outsideWrapper() includes the button!
 
-document.querySelector("#logout").addEventListener('click', () => {
-  window.location = "/logout"
-}, false);
+    document.querySelector("#logout").addEventListener('click', () => {
+      window.location = "/logout"
+    }, false);
 
