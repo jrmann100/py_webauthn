@@ -1,7 +1,7 @@
 setTimeout(() => {
-  document.querySelectorAll("#card").forEach((x, i) => {
+  document.querySelectorAll(".card").forEach((x, i) => {
     x.classList.add("visible");
-    x.correspondingService = document.querySelectorAll("#iframe-wrapper")[i];
+    x.correspondingService = document.querySelectorAll(".iframe-wrapper")[i];
     x.addEventListener('click', showService, false);
   })
 }, 100)
@@ -26,37 +26,36 @@ showService = function(event) {
   setTimeout(() => {
     document.addEventListener('click', outsideWrapper)
   }, 100) // FIND BETTER SOLUTION
-  activeService.querySelector("iframe").src = "/" + activeService.classList[0]; // this is janky but it just might work...
+  activeService.querySelector("iframe").src = "/" + activeService.id; // this is janky but it just might work...
 }
 
 
 hideService = function() {
   if ((activeService.classList[0] == "ssh" && onbeforeSSH()) || activeService.classList[0] != "ssh") {
-  activeService.querySelector("iframe").src = "";
-  activeService.classList.remove("visible");
-  document.querySelector("#exit").classList.remove("visible");
-}
+    activeService.querySelector("iframe").src = "";
+    activeService.classList.remove("visible");
+    document.querySelector("#exit").classList.remove("visible");
+  }
 }
 
 onbeforeSSH = function() {
-    contentWindow = activeService.querySelector("iframe").contentWindow
-    if ((contentWindow.shellinabox && contentWindow.shellinabox.session && confirm("Are you sure you want to end this SSH session?")) || !(contentWindow.shellinabox && contentWindow.shellinabox.session)) {
-        if (contentWindow.shellinabox){delete contentWindow.shellinabox.session;
-        delete contentWindow.onbeforeunload}
-        return true;
+  contentWindow = activeService.querySelector("iframe").contentWindow
+  if ((contentWindow.shellinabox && contentWindow.shellinabox.session && confirm("Are you sure you want to end this SSH session?")) || !(contentWindow.shellinabox && contentWindow.shellinabox.session)) {
+    if (contentWindow.shellinabox) {
+      delete contentWindow.shellinabox.session;
+      delete contentWindow.onbeforeunload
     }
-    else {
-        console.log("canceled.")
+    return true;
+  } else {
     setTimeout(() => {
-        document.addEventListener('click', outsideWrapper)
-        console.log("added listner..")
+      document.addEventListener('click', outsideWrapper)
     }, 100) // FIND BETTER SOLUTION
-        return false;
-    }
+    return false;
+  }
 }
-    //document.querySelector("#exit").addEventListener('click', hideService, false); // Since outsideWrapper() includes the button!
+//document.querySelector("#exit").addEventListener('click', hideService, false); // Since outsideWrapper() includes the button!
 
-    document.querySelector("#logout").addEventListener('click', () => {
-      window.location = "/logout"
-    }, false);
+document.querySelector("#logout").addEventListener('click', () => {
+  window.location = "/logout"
+}, false);
 

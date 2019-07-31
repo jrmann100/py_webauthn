@@ -80,8 +80,7 @@ whitelisted_users = [1, 2]
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.args.get('nginx') and current_user.is_authenticated and current_user.id not in whitelisted_users:
-        flash("You aren't whitelisted for service access.")
-        flash("Please contact a network administrator.")
+        return "You aren't whitelisted for service access.\nPlease contact a network administrator.", 403 # CUSTOM ERR CODE/PAGE?
     elif request.args.get('nginx') and not current_user.is_authenticated:
         flash("Please log in in order to access this service.")
     if current_user.is_authenticated:
@@ -93,14 +92,17 @@ def login():
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    return render_template("index.html", whitelisted = current_user.id in whitelisted_users) # Keep in mind boolean must be changed for JS
 
 @app.route("/account")
 @login_required
 def account():
-    return render_template("account.html", User = User)
+    return render_template("account.html", user = User.query.filter_by(id=current_user.id).first_or_404())
 
-
+@app.route("/radio")
+@login_required
+def radio():
+    return render_template("radio.html")
 
 if "--backdoor" in sys.argv[1:]:
     print("BACKDOOR ENABLED - SECURITY VULNERABLE")

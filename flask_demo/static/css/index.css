@@ -94,7 +94,8 @@ svg path {
   margin-top: 1.25em;
 }
 
-#header span, #footer span {
+#header span,
+#footer span {
   padding: 0.5em;
 }
 
@@ -120,7 +121,7 @@ span.right {
   fill: #808080;
 }
 
-#iframe-wrapper {
+.iframe-wrapper {
   z-index: 2;
   position: fixed;
   transition: all 0.25s ease-out, visibility 0.25s linear;
@@ -131,7 +132,7 @@ span.right {
   top: 3em;
 }
 
-#iframe-wrapper.ssh {
+.iframe-wrapper#ssh {
   left: 2%;
   right: 2%;
   bottom: 5%;
@@ -139,7 +140,7 @@ span.right {
   background: #191919;
 }
 
-#iframe-wrapper.account {
+.iframe-wrapper#account {
   left: 35%;
   right: 35%;
   bottom: 10%;
@@ -148,13 +149,22 @@ span.right {
   background: #DCDCDC;
 }
 
-#iframe-wrapper.visible {
+.iframe-wrapper#radio {
+  left: 5%;
+  right: 5%;
+  bottom: 10%;
+    padding: 0.5em;
+  border: 0.25em solid #696969;
+  background: #DCDCDC;
+}
+
+.iframe-wrapper.visible {
   transform: scale(1);
   opacity: 1;
   visibility: visible;
 }
 
-#iframe-wrapper iframe {
+.iframe-wrapper iframe {
   width: 100%;
   height: 100%;
   border: none;
@@ -167,7 +177,7 @@ span.right {
   text-align: center;
 }
 
-#card {
+.card {
   opacity: 0;
   visibility: hidden;
   position: relative;
@@ -184,7 +194,7 @@ span.right {
   cursor: pointer;
 }
 
-#card.visible {
+.card.visible {
   transform: scale(1);
   visibility: visible;
   opacity: 1;
@@ -194,14 +204,14 @@ span.right {
   /* https://stackoverflow.com/a/10296258/9068081 */
 }
 
-#card:hover {
+.card:hover {
   /*box-shadow: 0 0 0.75em #BEBEBE;*/
   transform: translateY(-0.1em) scale(1.01);
   /* does scaling look bad? */
   box-shadow: 0 0.25em 0.25em rgba(0, 0, 0, 0.25), 0 0.5em 1em rgba(0, 0, 0, 0.2);
 }
 
-#card::before {
+.card::before {
   content: "";
   position: absolute;
   top: 0;
@@ -213,26 +223,26 @@ span.right {
   cursor: pointer;
 }
 
-#card *:hover {
+.card *:hover {
   cursor: pointer;
 }
 
-#card p {
+.card p {
   transition: all 0.25s ease-out;
   color: #696969;
 }
 
-#card:hover p {
+.card:hover p {
   color: #808080;
 }
 
-#card svg {
+.card svg {
   width: 50%;
   height: 50%;
   padding-top: 15%;
 }
 
-#card:hover svg path {
+.card:hover svg path {
   fill: #808080;
 }
 

@@ -51,7 +51,8 @@ const didClickRegister = async (e) => {
   try {
     credentialCreateOptionsFromServer = await getCredentialCreateOptionsFromServer(formData);
   } catch (err) {
-    return console.error("Failed to generate credential request options:", credentialCreateOptionsFromServer)
+    hintErr(err)
+    return console.error("Failed to generate credential request options:", err)
   }
 
   // convert certain members of the PublicKeyCredentialCreateOptions into
@@ -65,6 +66,7 @@ const didClickRegister = async (e) => {
       publicKey: publicKeyCredentialCreateOptions
     });
   } catch (err) {
+    hintErr(err)
     return console.error("Error creating credential:", err);
   }
 
@@ -78,6 +80,7 @@ const didClickRegister = async (e) => {
   try {
     assertionValidationResponse = await postNewAssertionToServer(newAssertionForServer);
   } catch (err) {
+    hintErr(err)
     return console.error("Server validation of credential failed:", err);
   }
 
@@ -193,6 +196,7 @@ const didClickLogin = async (e) => {
   try {
     credentialRequestOptionsFromServer = await getCredentialRequestOptionsFromServer(formData);
   } catch (err) {
+    hintErr(err)
     return console.error("Error when getting request options from server:", err);
   }
 
@@ -209,6 +213,7 @@ const didClickLogin = async (e) => {
       publicKey: transformedCredentialRequestOptions,
     });
   } catch (err) {
+    hintErr(err);
     return console.error("Error when creating credential:", err);
   }
 
@@ -364,13 +369,28 @@ function hint() {
   }
 }
 
+
+function hintErr(text) {
+  if (text.toString().startsWith("NotAllowedError")){
+    text = "Key authentication failed.";
+  }
+  else if (text.toString().startsWith("InvalidStateError")){
+    text  = "Wrong key for username.";
+  }
+  document.querySelector("#hint").classList.add("visible");
+  setTimeout(()=>{document.querySelector("#hint").style.color = "#8B0000";}, 250);
+  setTimeout(()=>{document.querySelector("#hint").style.color = "inherit";}, 750);
+  document.querySelector("#hint").innerText = "Error: " + text;
+  document.querySelector("#popup button").addEventListener("click", removeHint);
+}
+
 function removeHint() {
   document.querySelector("#hint").classList.remove("visible");
   document.querySelector("#hint").innerText = "\xa0\n\xa0\n\xa0";
   this.removeEventListener("focusout", removeHint);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+//document.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
   document.querySelector("#popup").classList.add("visible");
 }, 100)
@@ -381,5 +401,5 @@ if (document.querySelector("#popup button")) {
   document.querySelector("#displayName").addEventListener("focus", hint);
 
 }
-}, false);
+//}, false);
 

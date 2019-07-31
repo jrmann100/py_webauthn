@@ -1,0 +1,223 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: #DCDCDC;
+  font-family: "Roboto", sans-serif;
+  color: #696969;
+  overflow: hidden;
+  font-size: 1.25em;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+#main {
+  z-index: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: absolute;
+  top: 2em;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.5em;
+}
+
+#footer {
+  position: absolute;
+  height: 2em;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#main::-webkit-scrollbar {
+  width: 0.5em;
+}
+
+#main::-webkit-scrollbar-track {
+  background-color: #DCDCDC;
+}
+
+#main::-webkit-scrollbar-thumb {
+  background-color: #808080;
+  border-radius: 0.5em;
+}
+
+/*#header {
+  z-index: 3;
+  position: fixed;
+  top: 0;
+  height: 2em;
+  left: 0;
+  right: 0;
+  background-color: #E0E0E0;
+  box-shadow: 0 0.1em 0.75em rgba(0, 0, 0, 0.375);
+}
+
+#title,
+#footer span {
+  padding: 0.5em;
+}
+
+span.left {
+  float: left;
+}
+
+span.right {
+  float: right;
+}
+
+#title {
+  transition: transform 0.5s ease-out, opacity 0.25s ease-out;
+  transform: translateX(-0.5em);
+  opacity: 0;
+}*/
+
+#toggle-wrapper {
+  width: 10em;
+  height: 10em;
+  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+  transform: translateY(1em) scale(0.5);
+  transform-origin: center;
+  opacity: 0;
+  cursor: pointer;
+  margin-right: auto;
+  margin-left: auto;
+  border-radius: 50%;
+}
+
+#toggle circle {
+  fill: #808080;
+}
+
+#toggle polygon {
+  fill: #DCDCDC;
+}
+
+#toggle,
+#plus,
+#minus {
+  transition: all 0.25s ease-out;
+  cursor: pointer;
+}
+
+#plus {
+  transform: translate(-0.5em, -0.25em) scale(0.99);
+  opacity: 0;
+}
+
+#minus {
+  transform: translate(0.5em, 0.25em) scale(0.99);
+  opacity: 0;
+}
+
+#plus,
+#minus polygon {
+  fill: #808080;
+}
+
+#plus,
+#minus {
+  height: 4em;
+  margin: auto;
+  filter: drop-shadow(0 0.25em 0.25em rgba(0, 0, 0, 0.25)) drop-shadow(0 0.25em 0.125em rgba(0, 0, 0, 0.5));
+}
+
+body.visible #title,
+body.visible #plus,
+body.visible #minus,
+body.visible #toggle-wrapper {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+body.visible #toggle {
+  filter: drop-shadow(0 0.5em 0.5em rgba(0, 0, 0, 0.25)) drop-shadow(0 0.5em 0.25em rgba(0, 0, 0, 0.5));
+}
+
+body.visible #toggle:hover {
+  filter: drop-shadow(0 1em 0.5em rgba(0, 0, 0, 0.25)) drop-shadow(0 0.5em 0.25em rgba(0, 0, 0, 0.5));
+  transform: translateY(-0.25em) scale(1.05);
+}
+
+body.visible #toggle-wrapper:active #toggle {
+  filter: drop-shadow(0 0.25em 0.5em rgba(0, 0, 0, 0.25)) drop-shadow(0 0.5em 0.25em rgba(0, 0, 0, 0.5));
+  transform: inherit !important;
+}
+
+body.visible #plus:not(.disabled):hover,
+body.visible #minus:not(.disabled):hover {
+  filter: drop-shadow(0 0.5em 0.25em rgba(0, 0, 0, 0.25)) drop-shadow(0 0.25em 0.125em rgba(0, 0, 0, 0.5));
+  transform: translateY(-0.125em) scale(1.05);
+}
+
+body.visible #plus:not(.disabled):active,
+body.visible #minus:not(.disabled):active {
+  filter: drop-shadow(0 0.125em 0.25em rgba(0, 0, 0, 0.25)) drop-shadow(0 0.25em 0.125em rgba(0, 0, 0, 0.5));
+  transform: inherit !important;
+}
+
+#controls * {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#controls {
+  display: inline-block;
+  width: fit-content;
+  text-align: center;
+  border-radius: 1em;
+  padding: 1em 2em;
+  background-color: #F5F5F5;
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.5);
+}
+
+#studiosel {
+  display: inline-block;
+  margin-top: 1em;
+  white-space: nowrap;
+}
+
+#studiosel button {
+  transition: all 0.25s ease-in;
+  font-size: 1.5em;
+  border-radius: 100%;
+  width: 3em;
+  height: 3em;
+  background-color: #F5F5F5;
+  color: #696969;
+  font-weight: bold;
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.5);
+  border: none;
+}
+
+#studiosel button.disabled {
+  cursor: pointer;
+  font-size: 1.25em;
+  opacity: 0.5;
+  box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.25);
+}
+
+#studiosel button.disabled:hover {
+  opacity: 1;
+  width: 3em;
+  height: 3em;
+  font-size: 1.375em;
+  transform: translateY(-0.1em);
+  box-shadow: 0 0.25em 0.5em rgba(0, 0, 0, 0.5), 0 0.125em 0.125em rgba(0, 0, 0, 0.25);
+}
+
+#player {
+  display: none;
+}
+
+body.visible #plus.disabled,
+body.visible #minus.disabled {
+  opacity: 0.5;
+  box-shadow: none;
+}
+

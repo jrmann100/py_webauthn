@@ -1,0 +1,58 @@
+<html>
+
+  <head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/radio.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,400i,700" rel="stylesheet">
+  </head>
+
+  <body>
+    <!--<div id="header">
+      <span id="title" class="left">studioStream <i>beta</i></span>
+    </div>!-->
+    <div id="main">
+      <div id="controls">
+        <svg id="plus" class="disabled" viewbox="0 0 75 75">
+          <polygon points="25,0 50,0 50,25 75,25 75,50 50,50 50,75 25,75 25, 50 0,50 0,25 25,25"></polygon>
+        </svg>
+        <div id="toggle-wrapper">
+
+          <svg id="toggle" viewBox="0 0 300 300">
+            <circle cx="150" cy="150" r="100" />
+
+            <polygon points="120,100 120,200 206.6025403784,150 206.6025403784,150">
+              <animate fill="freeze" id="toStop" attributeName="points" dur="500ms" to="100,100 100,200 200,200 200,100" begin="indefinite" calcMode="spline" keySplines="0 0.75 0.25 1" keyTimes="0;1" />
+              <animate fill="freeze" id="toPlay" attributeName="points" dur="500ms" to="120,100 120,200 206.6025403784,150 206.6025403784,150" begin="indefinite" calcMode="spline" keySplines="0 0.75 0.25 1" keyTimes="0;1" />
+            </polygon>
+
+          </svg>
+        </div>
+        <svg id="minus" viewbox="0 0 75 75">
+          <polygon points="75,25 75,50 0,50 0,25"></polygon>
+        </svg>
+      </div>
+      <br>
+      <div id="studiosel">
+        <button class="disabled">1</button>
+        <button class="disabled">
+          2
+        </button>
+        <button>
+          3
+        </button>
+        <button class="disabled">
+          4
+        </button>
+        <button class="disabled">
+          5
+        </button>
+      </div>
+    </div>
+    <audio id="player" type="audio/mpeg"></audio>
+    <!--<div id="footer">
+        <span class="right">by Jordan Mann</span>
+      </div>!-->
+    <script src="{{ url_for('static', filename='js/radio.js') }}"></script>
+  </body>
+
+</html>
+
