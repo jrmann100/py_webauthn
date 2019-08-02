@@ -372,7 +372,7 @@ function hint() {
 
 function hintErr(text) {
   if (text.toString().startsWith("NotAllowedError")){
-    text = "Key authentication failed.";
+    text = "You canceled authentication.";
   }
   else if (text.toString().startsWith("InvalidStateError")){
     text  = "Wrong key for username.";
@@ -381,7 +381,7 @@ function hintErr(text) {
   setTimeout(()=>{document.querySelector("#hint").style.color = "#8B0000";}, 250);
   setTimeout(()=>{document.querySelector("#hint").style.color = "inherit";}, 750);
   document.querySelector("#hint").innerText = "Error: " + text;
-  document.querySelector("#popup button").addEventListener("click", removeHint);
+  //document.querySelector("#popup button").addEventListener("click", removeHint);
 }
 
 function removeHint() {
@@ -402,4 +402,5 @@ if (document.querySelector("#popup button")) {
 
 }
 //}, false);
+
 
