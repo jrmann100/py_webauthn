@@ -108,3 +108,6 @@ venv.bak/
 # PyWebAuthn
 py_webauthn.env
 webauthn.db
+
+# vim
+*.swp

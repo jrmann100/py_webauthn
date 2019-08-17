@@ -23,6 +23,7 @@ from db import db
 from context import webauthn
 from models import User
 
+from requests import get
 
 from werkzeug.contrib.fixers import ProxyFix
 
@@ -36,7 +37,7 @@ app.secret_key = sk if sk else os.urandom(40)
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-
+app.url_map.strict_slashes = False
 
 RP_ID = 'dev.jrmann.com'
 ORIGIN = 'https://dev.jrmann.com'
@@ -44,6 +45,11 @@ ORIGIN = 'https://dev.jrmann.com'
 # Trust anchors (trusted attestation roots) should be
 # placed in TRUST_ANCHOR_DIR.
 TRUST_ANCHOR_DIR = 'trusted_attestation_roots'
+
+
+#@app.errorhandler(404) // need to implement jrmann.com 404 without inline loading.
+#def page_not_found(e):
+#    return render_template('404.html'), 404
 
 @app.route('/favicon.ico')
 def favicon():
@@ -57,6 +63,7 @@ def send_js(path):
 def apply_caching(response):
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Content-Security-Policy'] = "default-src 'self' *.googleapis.com *.gstatic.com"
+    response.headers['Access-Control-Allow-Origin'] = "rhsweb.org"
     response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -103,6 +110,17 @@ def account():
 @login_required
 def radio():
     return render_template("radio.html")
+
+@app.route("/grades")
+@login_required
+def grades():
+    return render_template("grades.html")
+
+@app.route("/grades/<code>")
+@login_required
+def gradesRequest(code):
+   r = get("http://rhsweb.org/slovelady/GRADES/Current/AllClasses/" + code + ".html")
+   return (r.text, r.status_code, r.headers.items()) 
 
 if "--backdoor" in sys.argv[1:]:
     print("BACKDOOR ENABLED - SECURITY VULNERABLE")

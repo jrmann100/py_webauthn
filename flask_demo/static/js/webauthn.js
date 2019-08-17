@@ -371,7 +371,7 @@ function hint() {
 
 
 function hintErr(text) {
-  if (text.toString().startsWith("NotAllowedError")){
+  if (text.toString().startsWith("NotAllowedError") || text.toString().startsWith("AbortError")){
     text = "You canceled authentication.";
   }
   else if (text.toString().startsWith("InvalidStateError")){
