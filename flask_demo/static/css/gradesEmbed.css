@@ -1,0 +1,133 @@
+body {
+  text-align: center;
+  background-color: #DCDCDC;
+  font-family: "Roboto", sans-serif;
+  color: #696969;
+  font-size: 1.25em;
+  z-index: 998;
+  line-height: 1.375em;
+  margin: 0;
+  position: absolute;
+  overflow: hidden;
+}
+
+center b {
+  font-size: 2em;
+}
+
+table {
+  background-color: transparent;
+  border: none;
+  border-collapse: collapse;
+}
+
+article {
+  position: fixed;
+  left: 1em;
+  right: 1em;
+  bottom: 0;
+  height: 100%;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+}
+
+section {
+  padding-top: 5em;
+  scroll-snap-align: start;
+}
+
+table * {
+  background-color: transparent;
+  border: none;
+}
+
+section:first-of-type table:nth-of-type(2) tr:first-of-type {
+  display: none;
+}
+
+section:first-of-type table:nth-of-type(2) tr:nth-of-type(2) {
+  border: 0.1em solid #696969;
+  font-size: 1.125em;
+}
+
+section:first-of-type table:nth-of-type(2) tr:not(:nth-of-type(2)) {
+  color: #808080;
+  font-style: italic;
+}
+
+section:last-of-type table tr:first-of-type {
+  position: sticky;
+  top: -6.25em;
+  background-color: #F5F5F5;
+  border-radius: 1em;
+  z-index: 5;
+}
+
+section:last-of-type table tr {
+  border-bottom: 0.1em solid #696969;
+}
+
+section:last-of-type {
+  margin-top: 5vh;
+  height: 50vh;
+  overflow-y: scroll;
+  border-bottom: 0.25em solid #696969;
+}
+
+canvas {
+  width: 20em;
+  height: 20em;
+  display: block;
+  margin: auto;
+  margin-top: 0.5em;
+  overflow: visible;
+}
+
+section:last-of-type b {
+  font-size: 1.375em;
+  line-height: 3em;
+}
+
+div {
+  transition: all 0.5s ease-out;
+  height: 2.5em;
+  cursor: pointer;
+  width: 2.5em;
+  border-radius: 1em;
+  position: fixed;
+  bottom: 1em;
+  right: 3em;
+  background-color: rgba(0, 0, 0, 0.125);
+}
+
+div:hover {
+  background-color: rgba(0, 0, 0, 0.5)
+}
+
+div svg {
+  transition: all 0.5s ease-out;
+  height: 2.25em;
+  margin-top: 0.125em;
+  width: auto;
+}
+
+div:hover svg {
+  transform: translateY(0.125em);
+}
+
+div svg path {
+  transition: all 0.125s ease-out;
+  fill: #696969;
+}
+
+div:hover svg path {
+  fill: #F5F5F5;
+}
+
+div.inverted svg {
+  transform: rotate(180deg) translateY(-0.125em);
+}
+
+div.inverted:hover svg {
+  transform: rotate(180deg) translateY(0);
+}

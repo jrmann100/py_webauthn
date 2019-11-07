@@ -87,7 +87,7 @@ whitelisted_users = [1, 2]
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.args.get('nginx') and current_user.is_authenticated and current_user.id not in whitelisted_users:
-        return "You aren't whitelisted for service access.\nPlease contact a network administrator.", 403 # CUSTOM ERR CODE/PAGE?
+        return "<!DOCTYPE HTML><html><body style=\"background-color: #191919; color: #c7c7c7; font-family: sans-serif;\"><p>You aren't whitelisted for service access.\nPlease contact a network administrator.</p></body>", 403 # CUSTOM ERR CODE/PAGE?
     elif request.args.get('nginx') and not current_user.is_authenticated:
         flash("Please log in in order to access this service.")
     if current_user.is_authenticated:
@@ -116,11 +116,44 @@ def radio():
 def grades():
     return render_template("grades.html")
 
-@app.route("/grades/<code>")
+@app.route("/accent")
+def accent():
+    return render_template("accent.html")
+
+# those above need to be redone so they are automatically loaded, I think. not sure.
+
+@app.route("/fetchGrades", methods=['GET', 'POST'])
 @login_required
-def gradesRequest(code):
-   r = get("http://rhsweb.org/slovelady/GRADES/Current/AllClasses/" + code + ".html")
-   return (r.text, r.status_code, r.headers.items()) 
+def gradesRequest():
+    json = request.get_json(silent=True)
+    try:
+        if (not json or not (json['name'] and json['password'] and json['user-agent'])):
+            return "Malformed request.", 500 
+    except KeyError:
+        return "Malformed request.", 500
+    alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    name = ''.join(c.lower() for c in json['name']if not c.isspace())
+    password = ''.join(c.lower() for c in json['password'] if not c.isspace())
+    code = "r"
+    for i in range(0, min(24, max(len(name), len(password)))):
+        n = p = 0
+        if (i < len(name)):
+            n = alphanum.index(name[i])
+        if (i < len(password)):
+            p = alphanum.index(password[i])
+        #n = (0 if n < 0 else n)
+        #p = (0 if p < 0 else p)
+        n = max(0, n)
+        p = max(0, p)
+        value = ((2 * n + p) ^ 13) % (len(alphanum) - 1)
+        if (value > 0):
+            code += alphanum[value]
+    headers = {
+        'User-Agent': json['user-agent'],
+        'Content-Type': 'text/html',
+    }
+    r = get("http://rhsweb.org/slovelady/GRADES/Current/AllClasses/" + code + ".html", headers=headers)
+    return (r.text, r.status_code, r.headers.items()) 
 
 if "--backdoor" in sys.argv[1:]:
     print("BACKDOOR ENABLED - SECURITY VULNERABLE")

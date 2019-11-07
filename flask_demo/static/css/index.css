@@ -153,7 +153,26 @@ span.right {
   left: 5%;
   right: 5%;
   bottom: 10%;
-    padding: 0.5em;
+  padding: 0.5em;
+  border: 0.25em solid #696969;
+  background: #DCDCDC;
+}
+
+.iframe-wrapper#grades {
+  left: 5%;
+  right: 5%;
+  bottom: 5%;
+  padding: 0.5em;
+  border: 0.25em solid #696969;
+  background: #DCDCDC;
+
+}
+
+.iframe-wrapper#accent {
+  left: 15%;
+  right: 15%;
+  bottom: 10%;
+  padding: 0.5em;
   border: 0.25em solid #696969;
   background: #DCDCDC;
 }
@@ -245,4 +264,3 @@ span.right {
 .card:hover svg path {
   fill: #808080;
 }
-

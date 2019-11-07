@@ -29,32 +29,11 @@ function removeHint() {
   this.removeEventListener("focusout", removeHint);
 }
 
-function createCode() {
-  var alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-  var name = document.querySelector("#name").value.toLowerCase().replace(" ", "");
-  var password = document.querySelector("#password").value.toLowerCase().replace(" ", "");
-  if (name.length == 0 || password.length == 0) {
-    hintErr("You didn't enter credentials.");
-    return;
-  }
-  console.log("Generating student code. Username: " + name + " and password " + password);
+function fetchGrades(name, password) {
 
-  var code = "r";
-  for (let i = 0; i < Math.min(24, Math.max(name.length, password.length)); i++) {
-    n = Math.max(((i < name.length) ? alphanum.indexOf(name[i]) : 0), 0);
-    p = Math.max(((i < password.length) ? alphanum.indexOf(password[i]) : 0), 0);
-    value = ((2 * n + p) ^ 13) % (alphanum.length - 1);
-    if (value > 0) {
-      code += alphanum[value]
-    }
-  }
-  console.log("Generated code: " + code);
-  return code;
-}
-
-function fetchGrades(code) {
   var request = new XMLHttpRequest();
-  request.open('GET', "/grades/" + code, true);
+  request.open('POST', "/fetchGrades", true);
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   request.addEventListener("error", () => {
     hintErr("Couldn't get grades\n(network error).");
   });
@@ -64,10 +43,21 @@ function fetchGrades(code) {
       console.log("Successfully fetched grades.");
       document.querySelector("#loader-fadebox").style.display = "block";
       document.querySelector("#loader-fadebox").style.opacity = 1;
-var frame = document.querySelector("#main").contentWindow.document;
-frame.open();
-frame.write(request.response);
-frame.close();
+      var frameElement = document.createElement("iframe");
+      frameElement.id = "main";
+      document.body.appendChild(frameElement);
+      var frame = frameElement.contentWindow.document;
+      frame.open();
+      frame.write(request.response);
+      var link = document.createElement("link");
+      link.type = "text/css";
+      link.rel = "stylesheet";
+      link.href = "/static/css/gradesEmbed.css";
+      frame.head.appendChild(link);
+      var script = document.createElement("script");
+      script.src = "/static/js/gradesEmbed.js";
+      frame.body.appendChild(script);
+      frame.close();
       document.querySelector("#popup").classList.remove("visible");
       setTimeout(() => {
         document.querySelector("#loader-fadebox").style.opacity = 0;
@@ -83,18 +73,25 @@ frame.close();
     }
   });
 
-  request.send();
+  request.send(JSON.stringify({"name": name, "password" : password, "user-agent": navigator.userAgent}));
 };
+
+var urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get("name")) {
+	document.querySelector("#name").value = urlParams.get('name');
+}
+if (urlParams.get("password")) {
+	document.querySelector("#password").value = urlParams.get('password');
+}
 
 setTimeout(() => {
   document.querySelector("#popup").classList.add("visible");
 }, 100);
-document.body.innerHTML += "<iframe id=\"main\"></iframe>"
 document.querySelector("#name").addEventListener("focus", hint);
 document.querySelector("#password").addEventListener("focus", hint);
 document.querySelector("#popup form").addEventListener("submit", (e) => {
   e.preventDefault();
-  fetchGrades(createCode());
+  var name = document.querySelector("#name").value.toLowerCase().replace(" ", "");
+  var password = document.querySelector("#password").value.toLowerCase().replace(" ", "");
+  fetchGrades(name, password);
 });
-
-

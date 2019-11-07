@@ -1,7 +1,6 @@
 html {
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
 }
 
 body {
@@ -12,76 +11,11 @@ body {
   z-index: 998;
   height: 100%;
   width: 100%;
-  margin: 0;
-  line-height: 1.375em;
-}
-
-#main {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.loader {
   position: fixed;
-  margin: auto;
-  right: 0;
-  left: 0;
-  top: 20vh;
-  border: 2.5vh solid transparent;
-  border-top: 2.5vh solid #696969;
-  border-radius: 50%;
-  width: 10vh;
-  height: 10vh;
-}
-
-.slow {
-  animation: spin 1.25s cubic-bezier(0.8, 0.3, 0.5, 0.8) infinite, colors-border 1.25s linear infinite;
-}
-
-.fast {
-  animation: spin 1.25s cubic-bezier(0.8, 0.2, 0.7, 0.8) infinite, colors-border 1.25s linear infinite;
-}
-
-@keyframes colors-border {
-  0% {
-    border-top: 2.5vh solid #808080;
-  }
-  50% {
-    border-top: 2.5vh solid #A0A0A0;
-  }
-  100% {
-    border-top: 2.5vh solid #808080;
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-#loader-fadebox {
-  opacity: 0;
-  display: none;
-  z-index: 999;
-  height: 100vh;
-  width: 100vw;
-  right: 0;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  background: #DCDCDC;
-  position: fixed;
-  transition: opacity 0.5s ease-out;
   text-align: center;
 }
 
 #popup {
-  z-index: 998;
   opacity: 0;
   visibility: hidden;
   position: fixed;
@@ -90,11 +24,12 @@ body {
   top: 50%;
   left: 50%;
   width: max-content;
+  min-width: 10em;
   height: max-content;
   border-radius: 0.75em;
   text-align: center;
   transform: translate(-50%, -50%) scale(1.05);
-  transition: all 0.5s ease-out, visibility 0s linear;
+  transition: all 0.5s ease-out, visibility 0s linear, width 5s ease-out;
   padding: 1.75em 0.5em;
 }
 
@@ -118,21 +53,16 @@ body {
   }
 }
 
-#popup svg {
-  width: 10em;
-  margin-top: 1em;
+#popup h1 {
+  transition: opacity 2s ease-out;
+  opacity: 0;
+  line-height: 0.25em;
+  margin-top: 0.75em;
+  font-weight: normal;
 }
 
-#popup svg path {
-  transition: stroke-dashoffset 5s ease 0.75s;
-  transform: scale(0.9) translate(5%, 5%);
-  stroke-width: 0.375em;
-  stroke-dasharray: 2493.79150390625;
-  stroke-dashoffset: 2493.79150390625;
-}
-
-#popup.visible svg path {
-  stroke-dashoffset: 0;
+#popup.visible h1 {
+  opacity: 1;
 }
 
 #popup input {
@@ -143,23 +73,19 @@ body {
   border-radius: 0.25em;
   border: none;
   text-align: center;
-  width: 90%;
+  width: 2em;
   font-size: 1em;
   outline: 0;
   max-height: 0;
   margin: 0;
   opacity: 0;
   box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.2);
+  margin-bottom: 1.5em;
 }
 
-#popup.visible #username.visible {
+#popup.visible input {
   opacity: 1;
-}
-
-#popup.visible input.visible {
-  margin: 0.5em 0;
   max-height: inherit;
-  opacity: 1;
 }
 
 #popup input.visible::placeholder {
@@ -187,33 +113,24 @@ body {
 }
 
 #popup button {
+  display: inline-block;
   transition: all 0.25s ease-out;
   margin: auto;
   width: 2.25em;
   height: 1.75em;
-  display: block;
   border-radius: 0.25em;
   background-color: white;
   cursor: pointer;
   font-size: 0.75em;
   opacity: 0;
   box-shadow: 0 0.125em 0.125em rgba(0, 0, 0, 0.25), 0 0.125em 0.0625em rgba(0, 0, 0, 0.5);
-  transform: inherit;
   border: none;
-  border-top: 0.1em solid rgba(0, 0, 0, 0.125);
   text-align: center;
+  transform: translateY(0) scale(1);
 }
 
 #popup.visible button {
   opacity: 1;
-}
-
-#popup button svg {
-  fill: #696969;
-  display: block;
-  margin: auto;
-  height: 100%;
-  width: 100%;
 }
 
 #popup button:hover {
@@ -224,20 +141,19 @@ body {
 
 #popup button:active {
   box-shadow: 0 0.0625em 0.0625em rgba(0, 0, 0, 0.25);
-  transform: inherit;
+  transform: translateY(0) scale(1);
 }
 
 #hint {
   transition: all 0.5s ease-out;
-  max-height: 1.375em;
+  min-height: 4em;
+  width: 100%;
   opacity: 0;
   overflow: hidden;
-  height: auto;
   white-space: nowrap;
 }
 
 #hint.visible {
   opacity: 1;
-  max-height: 2.75em;
 }
 
