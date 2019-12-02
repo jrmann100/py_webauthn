@@ -112,7 +112,7 @@ def radio():
     return render_template("radio.html")
 
 @app.route("/grades")
-@login_required
+#@login_required
 def grades():
     return render_template("grades.html")
 
@@ -123,7 +123,7 @@ def accent():
 # those above need to be redone so they are automatically loaded, I think. not sure.
 
 @app.route("/fetchGrades", methods=['GET', 'POST'])
-@login_required
+#@login_required
 def gradesRequest():
     json = request.get_json(silent=True)
     try:

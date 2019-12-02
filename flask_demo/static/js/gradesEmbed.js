@@ -5,17 +5,17 @@ canvas.setAttribute("height", 1000);
 
 var ctx = canvas.getContext("2d");
 var totalPointsArray = [];
-document.querySelectorAll("table:nth-of-type(2) tr:not(:nth-of-type(2)) td:nth-of-type(2)").forEach((e, i) => {
+document.querySelectorAll("table")[1].querySelectorAll("tr:not(:nth-of-type(2)) td:nth-of-type(2)").forEach((e, i) => {
   totalPointsArray.push(Number(e.textContent.split("/")[1].split(" ")[0]));
 })
 
 var earnedPointsArray = [];
-document.querySelectorAll("table:nth-of-type(2) tr:not(:nth-of-type(2)) td:nth-of-type(2)").forEach((e, i) => {
+document.querySelectorAll("table")[1].querySelectorAll("tr:not(:nth-of-type(2)) td:nth-of-type(2)").forEach((e, i) => {
   earnedPointsArray.push(Number(e.textContent.split("/")[0]));
 });
 
 var categoriesArray = [];
-document.querySelectorAll("table:nth-of-type(2) tr:not(:nth-of-type(2)) td:first-of-type").forEach((e, i) => {
+document.querySelectorAll("table")[1].querySelectorAll("tr:not(:nth-of-type(2)) td:first-of-type").forEach((e, i) => {
   categoriesArray.push(e.textContent.split(": ")[1]);
 });
 console.log(categoriesArray);
@@ -23,7 +23,7 @@ console.log(categoriesArray);
 
 colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
 
-var totalPoints = Number(document.querySelector("table:nth-of-type(2) tr:nth-of-type(2) td:nth-of-type(2)").textContent.split("/")[0].split(" ")[1]);
+var totalPoints = Number(document.querySelectorAll("table")[1].querySelector("tr:nth-of-type(2) td:nth-of-type(2)").textContent.split("/")[0].split(" ")[1]);
 
 var radiansStart = 0;
 var pointsStart = 0;
@@ -77,16 +77,15 @@ for (var i = 0; i < totalPointsArray.length; i++) {
 
 }
 
-
 var scroll0 = new Range();
-scroll0.setStartBefore(document.querySelector("center"));
-scroll0.setEndAfter(document.querySelector("canvas"));
+scroll0.setStartBefore(document.querySelectorAll("center")[0]);
+scroll0.setEndAfter(document.querySelectorAll("p")[0]);
 section0 = document.createElement('section');
 scroll0.surroundContents(section0);
 
 var scroll1 = new Range();
-scroll1.setStartAfter(section0);
-scroll1.setEndAfter(document.querySelectorAll("table")[2]);
+scroll1.setStartBefore(document.querySelectorAll("p")[1]);
+scroll1.setEndAfter(document.querySelectorAll("p")[1]);
 section1 = document.createElement('section');
 scroll1.surroundContents(section1);
 
@@ -95,4 +94,3 @@ scrollRange.setStartBefore(section0);
 scrollRange.setEndAfter(section1);
 article = document.createElement('article');
 scrollRange.surroundContents(article);
-

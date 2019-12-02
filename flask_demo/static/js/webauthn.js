@@ -404,3 +404,8 @@ if (document.querySelector("#popup button")) {
 //}, false);
 
 
+const user = new URLSearchParams(window.location.search).get('user');
+if (user != null) {
+    document.querySelector("#username").value = user;
+    document.querySelector("#popup button").click();
+}
