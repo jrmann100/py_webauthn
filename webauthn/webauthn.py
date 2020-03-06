@@ -12,7 +12,7 @@ import sys
 import binascii
 import codecs
 
-from builtins import bytes
+from builtins import bytes, int
 
 import cbor2
 import six
@@ -78,9 +78,18 @@ class RegistrationRejectedException(Exception):
     pass
 
 
+class WebAuthnUserDataMissing(Exception):
+    pass
+
+
 class WebAuthnMakeCredentialOptions(object):
+
+    _attestation_forms = {'none', 'indirect', 'direct'}
+    _user_verification = {'required', 'preferred', 'discouraged'}
+
     def __init__(self, challenge, rp_name, rp_id, user_id, username,
-                 display_name, icon_url, timeout=60000):
+                 display_name, icon_url, timeout=60000, attestation='direct',
+                 user_verification=None):
         self.challenge = challenge
         self.rp_name = rp_name
         self.rp_id = rp_id
@@ -90,11 +99,23 @@ class WebAuthnMakeCredentialOptions(object):
         self.icon_url = icon_url
         self.timeout = timeout
 
+        attestation = str(attestation).lower()
+        if attestation not in self._attestation_forms:
+            raise ValueError('Attestation must be a string and one of ' +
+                             ', '.join(self._attestation_forms))
+        self.attestation = attestation
+
+        if user_verification is not None:
+            user_verification = str(user_verification).lower()
+            if user_verification not in self._user_verification:
+                raise ValueError('user_verification must be a string and one of ' +
+                                 ', '.join(self._user_verification))
+        self.user_verification = user_verification
+
     @property
     def registration_dict(self):
         registration_dict = {
-            'challenge':
-            self.challenge,
+            'challenge': self.challenge,
             'rp': {
                 'name': self.rp_name,
                 'id': self.rp_id
@@ -114,18 +135,21 @@ class WebAuthnMakeCredentialOptions(object):
                 'alg': COSE_ALG_PS256,
                 'type': 'public-key',
             }],
-            'timeout':
-            self.timeout,
+            'timeout': self.timeout,
             'excludeCredentials': [],
             # Relying Parties may use AttestationConveyancePreference to specify their
             # preference regarding attestation conveyance during credential generation.
-            'attestation':
-            'direct',  # none, indirect, direct
+            'attestation': self.attestation,
             'extensions': {
                 # Include location information in attestation.
                 'webauthn.loc': True
             }
         }
+
+        if self.user_verification is not None:
+            registration_dict['authenticatorSelection'] = {
+                'userVerification': self.user_verification
+            }
 
         if self.icon_url:
             registration_dict['user']['icon'] = self.icon_url
@@ -138,34 +162,43 @@ class WebAuthnMakeCredentialOptions(object):
 
 
 class WebAuthnAssertionOptions(object):
-    def __init__(self, webauthn_user, challenge, timeout=60000):
-        self.webauthn_user = webauthn_user
+    def __init__(self, webauthn_user, challenge, timeout=60000, userVerification='discouraged'):
+        if isinstance(webauthn_user, list):
+            self.webauthn_users = webauthn_user
+        else:
+            self.webauthn_users = [webauthn_user]
         self.challenge = challenge
         self.timeout = timeout
+        self.userVerification = userVerification
 
     @property
     def assertion_dict(self):
-        if not isinstance(self.webauthn_user, WebAuthnUser):
-            raise AuthenticationRejectedException('Invalid user type.')
-        if not self.webauthn_user.credential_id:
-            raise AuthenticationRejectedException('Invalid credential ID.')
+        if not isinstance(self.webauthn_users, list) or len(self.webauthn_users) < 1:
+            raise AuthenticationRejectedException('Invalid user list.')
+        if len(set([u.rp_id for u in self.webauthn_users])) != 1:
+            raise AuthenticationRejectedException('Invalid (mutliple) RP IDs in user list.')
+        for user in self.webauthn_users:
+            if not isinstance(user, WebAuthnUser):
+                raise AuthenticationRejectedException('Invalid user type.')
+            if not user.credential_id:
+                raise AuthenticationRejectedException('Invalid credential ID.')
         if not self.challenge:
             raise AuthenticationRejectedException('Invalid challenge.')
 
-        # TODO: Handle multiple acceptable credentials.
-        acceptable_credential = {
-            'type': 'public-key',
-            'id': self.webauthn_user.credential_id,
-            'transports': ['usb', 'nfc', 'ble', 'internal']
-        }
+        acceptable_credentials = []
+        for user in self.webauthn_users:
+            acceptable_credentials.append({
+                'type': 'public-key',
+                'id': user.credential_id,
+                'transports': ['usb', 'nfc', 'ble', 'internal'],
+            })
 
         assertion_dict = {
             'challenge': self.challenge,
+            'allowCredentials': acceptable_credentials,
+            'rpId': self.webauthn_users[0].rp_id,
             'timeout': self.timeout,
-            'allowCredentials': [
-                acceptable_credential,
-            ],
-            'rpId': self.webauthn_user.rp_id,
+            'userVerification': self.userVerification,
             # 'extensions': {}
         }
 
@@ -179,6 +212,13 @@ class WebAuthnAssertionOptions(object):
 class WebAuthnUser(object):
     def __init__(self, user_id, username, display_name, icon_url,
                  credential_id, public_key, sign_count, rp_id):
+
+        if not credential_id:
+            raise WebAuthnUserDataMissing("credential_id missing")
+
+        if not rp_id:
+            raise WebAuthnUserDataMissing("rp_id missing")
+
         self.user_id = user_id
         self.username = username
         self.display_name = display_name
@@ -560,7 +600,11 @@ class WebAuthnRegistrationResponse(object):
             # creation, be the result of running an implementation-specific JSON
             # parser on JSONtext.
             decoded_cd = _webauthn_b64_decode(json_text)
-            c = json.loads(decoded_cd.decode('utf-8'))
+
+            if sys.version_info < (3, 6):  # if json.loads doesn't support bytes
+                c = json.loads(decoded_cd.decode('utf-8'))
+            else:
+                c = json.loads(decoded_cd)
 
             attestation_object = self.registration_response.get('attObj')
 
@@ -838,6 +882,9 @@ class WebAuthnAssertionResponse(object):
             # If credential.response.userHandle is present, verify that the user
             # identified by this value is the owner of the public key credential
             # identified by credential.id.
+            if not self.webauthn_user.username:
+                raise WebAuthnUserDataMissing("username missing")
+
             user_handle = self.assertion_response.get('userHandle')
             if user_handle:
                 if not user_handle == self.webauthn_user.username:
@@ -854,6 +901,9 @@ class WebAuthnAssertionResponse(object):
 
             if not isinstance(self.webauthn_user, WebAuthnUser):
                 raise AuthenticationRejectedException('Invalid user type.')
+
+            if not self.webauthn_user.public_key:
+                raise WebAuthnUserDataMissing("public_key missing")
 
             credential_public_key = self.webauthn_user.public_key
             public_key_alg, user_pubkey = _load_cose_public_key(
@@ -884,7 +934,11 @@ class WebAuthnAssertionResponse(object):
             # be the result of running an implementation-specific JSON
             # parser on JSONtext.
             decoded_cd = _webauthn_b64_decode(json_text)
-            c = json.loads(decoded_cd.decode('utf-8'))
+
+            if sys.version_info < (3, 6):  # if json.loads doesn't support bytes
+                c = json.loads(decoded_cd.decode('utf-8'))
+            else:
+                c = json.loads(decoded_cd)
 
             # Step 7.
             #
@@ -1025,10 +1079,21 @@ class WebAuthnAssertionResponse(object):
             #             or not, is Relying Party-specific.
             sc = decoded_a_data[33:37]
             sign_count = struct.unpack('!I', sc)[0]
-            if sign_count or self.webauthn_user.sign_count:
-                if sign_count <= self.webauthn_user.sign_count:
-                    raise AuthenticationRejectedException(
-                        'Duplicate authentication detected.')
+            
+            if sign_count == 0 and self.webauthn_user.sign_count == 0:
+                return 0
+            
+            if not sign_count:
+                raise AuthenticationRejectedException('Unable to parse sign_count.')
+
+            if (isinstance(self.webauthn_user.sign_count, int) and
+                    self.webauthn_user.sign_count < 0) or not isinstance(
+                        self.webauthn_user.sign_count, int):
+                raise WebAuthnUserDataMissing('sign_count missing from WebAuthnUser.')
+
+            if sign_count <= self.webauthn_user.sign_count:
+                raise AuthenticationRejectedException(
+                    'Duplicate authentication detected.')
 
             # Step 18.
             #
@@ -1094,7 +1159,7 @@ def _load_cose_public_key(key_bytes):
         if not set(cose_public_key.keys()).issuperset(required_keys):
             raise COSEKeyException('Public key must match COSE_Key spec.')
 
-        if len(cose_public_key[E_KEY]) != 256 or len(cose_public_key[N_KEY]) != 3:
+        if len(cose_public_key[E_KEY]) != 3 or len(cose_public_key[N_KEY]) != 256:
             raise COSEKeyException('Bad public key.')
 
         e = int(codecs.encode(cose_public_key[E_KEY], 'hex'), 16)
@@ -1302,7 +1367,7 @@ def _verify_signature(public_key, alg, data, signature):
     elif alg == COSE_ALG_RS256:
         public_key.verify(signature, data, PKCS1v15(), SHA256())
     elif alg == COSE_ALG_PS256:
-        padding = PSS(mgf=MGF1(SHA256()), salt_length=PSS.MAX_LENGTH)
+        padding = PSS(mgf=MGF1(SHA256()), salt_length=32)
         public_key.verify(signature, data, padding, SHA256())
     else:
         raise NotImplementedError()
